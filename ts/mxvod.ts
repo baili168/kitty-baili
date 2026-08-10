@@ -34,7 +34,7 @@ export default class mxvod implements Handle {
       const banner = $(".dymrslide.banner").toArray().map(item => {
         const a = $(item).find("a")
         const id = a.attr("href") ?? ""
-        const title = $(item).find(".dymr_title").text().trim() || a.attr("title") ?? ""
+        const title = $(item).find(".dymr_title").text().trim() || (a.attr("title") ?? "")
         const cover = $(item).find("img").attr("src") ?? ""
         return <IMovie>{ id, title, cover, remark: "" }
       })
@@ -84,9 +84,9 @@ export default class mxvod implements Handle {
     const id = env.get<string>("movieId")
     const url = `${env.baseUrl}${id}`
     const $ = kitty.load(await req(url))
-    const desc = $(".content-desc").text().trim() || $("meta[name='description']").attr("content") ?? ""
+    const desc = $(".content-desc").text().trim() || ($("meta[name='description']").attr("content") ?? "")
     const tabs = $(".play-source-tab a, .module-tab-item").toArray().map(item => {
-      const name = $(item).attr("data-dropdown-value") ?? $(item).find("span").attr("data-dropdown-value")
+      const name = $(item).attr("data-dropdown-value") ?? $(item).find("span").attr("data-dropdown-value") ?? undefined
       return name
     })
     const playlistTable = $(".module-player-list").toArray().map(item => {
