@@ -5,7 +5,7 @@ export default class mxvod implements Handle {
     return <Iconfig>{
       id: 'mxvod',
       name: 'MXVOD',
-      api: "https://www.mxvod.com",
+      api: "https://iuzvod.com",
       nsfw: false,
       type: 1,
       extra: {
@@ -17,13 +17,12 @@ export default class mxvod implements Handle {
   async getCategory() {
     return [
       { text: '首页', id: "/" },
-      { text: '电影', id: "dianyin" },
+      { text: '电影', id: "dianying" },
       { text: '电视剧', id: "dianshiju" },
       { text: '综艺', id: "zongyi" },
       { text: '动漫', id: "dongman" },
       { text: '短剧', id: "duanju" },
       { text: '电影解说', id: "dianyingjieshuo" },
-      { text: '直播', id: "live" },
       { text: '体育', id: "tiyu" },
     ]
   }
@@ -32,27 +31,26 @@ export default class mxvod implements Handle {
     const page = env.get('page')
     if (cate == "/") {
       const $ = kitty.load(await req(env.baseUrl))
-      const banner = $(".swiper-container .swiper-slide").toArray().map(item => {
-        const bb = $(item).find(".banner")
-        const id = bb.attr("href") ?? ""
-        const title = bb.attr("data-name") ?? ""
-        const remark = bb.attr("data-fname") ?? ""
-        const cover = env.baseUrl + bb.attr("style")!.match((/background:\s*url\(([^)]+)\)/))![1]
-        return <IMovie>{ id, title, cover, remark }
+      const banner = $(".dymrslide.banner").toArray().map(item => {
+        const a = $(item).find("a")
+        const id = a.attr("href") ?? ""
+        const title = $(item).find(".dymr_title").text().trim() || a.attr("title") ?? ""
+        const cover = $(item).find("img").attr("src") ?? ""
+        return <IMovie>{ id, title, cover, remark: "" }
       })
-      const list = $(".content .module").toArray().map<IHomeContentItem | null>(item => {
-        if ($(item).hasClass("homepage_homepage_channelnav")) return null
-        const title = $($(item).find(".module-title").toArray()[0]).text().trim()
-        const videos = $(item).find(".module-items .module-item").toArray().map(item => {
-          const a = $(item).find("a.module-item-title")
+      const list = $(".homepage_main_tabs_wrap").toArray().map<IHomeContentItem | null>(item => {
+        const titleEl = $(item).find(".homepage_main_tabs_title_new")
+        if (!titleEl.length) return null
+        const title = titleEl.text().trim()
+        const videos = $(item).find(".homepage_video_wrap").toArray().map(item => {
+          const a = $(item)
           const id = a.attr("href") ?? ""
-          const title = a.text().trim()
-          const cover = env.baseUrl + ($(item).find(".module-item-pic img").attr("data-src") ?? "")
-          const remark = $(item).find(".module-item-caption").text().trim()
-          return <IMovie>{ id, title, cover, remark }
+          const title = a.attr("title") ?? ""
+          const cover = $(item).find("img").attr("src") ?? ""
+          return <IMovie>{ id, title, cover, remark: "" }
         })
         if (!videos.length) return null
-        return <IHomeContentItem>{ type: "list", title: title, videos }
+        return <IHomeContentItem>{ type: "list", title, videos }
       }).filter(item => !!item)
       return <IHomeData>{
         type: "complex",
@@ -72,25 +70,22 @@ export default class mxvod implements Handle {
         ],
       }
     }
-    const url = `${env.baseUrl}/vodshow/${cate}--------${page}---.html`
+    const url = `${env.baseUrl}/vodshow/${cate}-----------.html`
     const $ = kitty.load(await req(url))
-    return $($(".module .module-list").toArray()[0]).find(".module-items .module-item").toArray().map<IMovie>(item => {
-      const a = $(item).find("a")
-      const img = $(item).find("img")
+    return $(".homepage_video_wrap").toArray().map<IMovie>(item => {
+      const a = $(item)
       const id = a.attr("href") ?? ""
-      let cover = img.attr("data-src") ?? ""
-      cover = `${env.baseUrl}${cover}`
-      const title = img.attr("alt") ?? ""
-      const remark = $(item).find('.module-item-caption').text() ?? ""
-      return <IMovie>{ id, title, cover, remark, playlist: [] }
+      const title = a.attr("title") ?? ""
+      const cover = $(item).find("img").attr("src") ?? ""
+      return <IMovie>{ id, title, cover, remark: "", playlist: [] }
     })
   }
   async getDetail() {
     const id = env.get<string>("movieId")
     const url = `${env.baseUrl}${id}`
     const $ = kitty.load(await req(url))
-    const desc = ($($(".video-info-header .txtone").toArray().at(-1)).text() ?? "").trim()
-    const tabs = $('.play-source-tab a, .module-tab-item').toArray().map(item => {
+    const desc = $(".content-desc").text().trim() || $("meta[name='description']").attr("content") ?? ""
+    const tabs = $(".play-source-tab a, .module-tab-item").toArray().map(item => {
       const name = $(item).attr("data-dropdown-value") ?? $(item).find("span").attr("data-dropdown-value")
       return name
     })
@@ -107,7 +102,7 @@ export default class mxvod implements Handle {
     const playlist = tabs.map((item, index) => {
       return <IPlaylist>{
         title: item,
-        videos: playlistTable[index].list
+        videos: playlistTable[index]?.list ?? []
       }
     })
     return <IMovie>{ desc, playlist }
@@ -115,15 +110,13 @@ export default class mxvod implements Handle {
   async getSearch() {
     const wd = env.get("keyword")
     const page = env.get("page")
-    const url = `${env.baseUrl}/vodsearch/${wd}----------${page}---.html`
+    const url = `${env.baseUrl}/vodsearch/${encodeURIComponent(wd ?? '')}----------${page}---.html`
     const $ = kitty.load(await req(url))
-    return $(".module-search-item").toArray().map<IMovie>(item => {
-      const a = $(item).find("a")
-      const img = $(item).find("img")
+    return $(".homepage_video_wrap").toArray().map<IMovie>(item => {
+      const a = $(item)
       const id = a.attr("href") ?? ""
       const title = a.attr("title") ?? ""
-      let cover = img.attr("data-src") ?? ""
-      cover = `${env.baseUrl}${cover}`
+      const cover = $(item).find("img").attr("src") ?? ""
       return { id, title, cover, remark: "", desc: "", playlist: [] }
     })
   }
@@ -132,7 +125,7 @@ export default class mxvod implements Handle {
   }
 }
 
-const env = createTestEnv("https://www.mxvod.com")
+const env = createTestEnv("https://iuzvod.com")
 const tv = new mxvod();
 (async () => {
   const cates = await tv.getCategory()

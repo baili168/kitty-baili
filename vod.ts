@@ -26,6 +26,105 @@ const vods = <Iconfig[]>[
       gfw: false,
     },
   },
+  {
+    id: "bfzy",
+    name: "暴风(无广,1280P)",
+    api: "https://bfzyapi.com/api.php/provide/vod/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: false,
+    },
+  },
+  {
+    id: "ffzy",
+    name: "飞飞(无广,1280P,ffzy)",
+    api: "http://api.ffzyapi.com/api.php/provide/vod/from/ffm3u8/at/json/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: false,
+    },
+  },
+  {
+    id: "tyyszy",
+    name: "天涯资源(无广,1920P)",
+    api: "https://tyyszy.com/api.php/provide/vod/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: false,
+    },
+  },
+  {
+    id: "rycj",
+    name: "如意资源(无广,1080P)",
+    api: "https://cj.rycjapi.com/api.php/provide/vod/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: false,
+    },
+  },
+  {
+    id: "zuidapi",
+    name: "最大资源(无广,1280P)",
+    api: "https://api.zuidapi.com/api.php/provide/vod/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: false,
+    },
+  },
+  {
+    id: "dyttzy",
+    name: "电影天堂资源(无广,1920P)",
+    api: "http://caiji.dyttzyapi.com/api.php/provide/vod/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: false,
+    },
+  },
+  {
+    id: "cjffzy",
+    name: "非凡资源(无广,1280P,ffzy)",
+    api: "https://cj.ffzyapi.com/api.php/provide/vod/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: true,
+    },
+  },
+  {
+    id: "apiffzy",
+    name: "非凡影视new(无广,1280P,ffzy)",
+    api: "https://api.ffzyapi.com/api.php/provide/vod/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: true,
+    },
+  },
+  {
+    id: "lziapi",
+    name: "量子(无广,1080P)",
+    api: "https://cj.lziapi.com/api.php/provide/vod/from/lzm3u8/at/xml/",
+    nsfw: false,
+    logo: "",
+    type: 0,
+    extra: {
+      gfw: false,
+    },
+  },
 ];
 
 // from args context

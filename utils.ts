@@ -4,6 +4,23 @@ import compare from 'semver/functions/compare'
 
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
+// Global proxy configuration - set via environment variables or config
+const PROXY_URL = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy || '';
+
+function getProxyAgent() {
+  if (!PROXY_URL) return undefined;
+
+  // Dynamic import for proxy agent (Node.js only)
+  // Bun has built-in proxy support via environment variables
+  try {
+    // @ts-ignore
+    const { HttpsProxyAgent } = require('https-proxy-agent');
+    return new HttpsProxyAgent(PROXY_URL);
+  } catch {
+    return undefined;
+  }
+}
+
 export async function req(
   urlOrOptions: string | KittyRequestOptions,
   options?: Partial<KittyRequestOptions>
@@ -42,7 +59,7 @@ export async function req(
   if (!finalOptions.data) {
     finalOptions.data = {}
   }
-  
+
   if (finalOptions.params && Object.keys(finalOptions.params).length > 0) {
     if (finalOptions.method === 'GET') {
       const urlObj = new URL(url)
@@ -60,6 +77,22 @@ export async function req(
     } else {
       finalOptions.headers['Content-Type'] = 'application/json'
       body = JSON.stringify(finalOptions.data)
+    }
+  }
+
+  // Check if request needs proxy (HTTPS URLs or gfw flag)
+  const needsProxy = url.startsWith('https://') && PROXY_URL;
+
+  if (needsProxy) {
+    const agent = getProxyAgent();
+    if (agent) {
+      const response = await fetch(url, {
+        method: finalOptions.method,
+        headers: finalOptions.headers,
+        body: body,
+        dispatcher: agent
+      } as any);
+      return await response.text();
     }
   }
 

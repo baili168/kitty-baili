@@ -126,6 +126,12 @@ export default class xiaoyakankan implements Handle {
     }
     return <IMovie>{ cover, desc, playlist }
   }
+
+  async getSearch() {
+    // Site search is client-side only, no server-side API available
+    // Return empty results - users can browse categories instead
+    return []
+  }
 }
 
 const env = createTestEnv("https://xiaoyakankan.com")
