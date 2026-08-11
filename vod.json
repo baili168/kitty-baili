@@ -11,17 +11,6 @@
     }
   },
   {
-    "id": "feifanziyuan",
-    "name": "非凡资源",
-    "api": "http://cj.ffzyapi.com/api.php/provide/vod/at/xml",
-    "logo": "http://cj.ffzyapi.com/template/ffzy/static/picture/logo.png",
-    "nsfw": false,
-    "type": 0,
-    "extra": {
-      "gfw": false
-    }
-  },
-  {
     "id": "bfzy",
     "name": "暴风(无广,1280P)",
     "api": "https://bfzyapi.com/api.php/provide/vod/",

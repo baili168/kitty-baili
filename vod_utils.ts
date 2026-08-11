@@ -17,7 +17,7 @@ async function getCategory(cfg: Iconfig): Promise<ICategory[]> {
     return $("class ty").toArray().map<ICategory>(item => {
       return {
         text: $(item).text().trim(),
-        id: $(item).attr("id") ?? "",
+        id: $(item).attr("id") || "",
       }
     })
   } else if (isJSON(text)) {
@@ -49,11 +49,11 @@ async function getVideosCountWithCategory(cfg: Iconfig, cate: ICategory): Promis
   })
   if (isXML(text)) {
     const $ = load(text, { xmlMode: true })
-    return +($("list").attr("pagecount") ?? 0)
+    return +($("list").attr("pagecount") || 0)
   } else if (isJSON(text)) {
     try {
       const obj: { pagecount: number } = JSON.parse(text)
-      return +(obj.pagecount ?? 0)
+      return +(obj.pagecount || 0)
     } catch (error) {
       return 0
     }

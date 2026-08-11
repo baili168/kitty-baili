@@ -33,9 +33,9 @@ export default class mxvod implements Handle {
       const $ = kitty.load(await req(env.baseUrl))
       const banner = $(".dymrslide.banner").toArray().map(item => {
         const a = $(item).find("a")
-        const id = a.attr("href") ?? ""
-        const title = $(item).find(".dymr_title").text().trim() || (a.attr("title") ?? "")
-        const cover = $(item).find("img").attr("src") ?? ""
+        const id = a.attr("href") || ""
+        const title = $(item).find(".dymr_title").text().trim() || (a.attr("title") || "")
+        const cover = $(item).find("img").attr("src") || ""
         return <IMovie>{ id, title, cover, remark: "" }
       })
       const list = $(".homepage_main_tabs_wrap").toArray().map<IHomeContentItem | null>(item => {
@@ -44,9 +44,9 @@ export default class mxvod implements Handle {
         const title = titleEl.text().trim()
         const videos = $(item).find(".homepage_video_wrap").toArray().map(item => {
           const a = $(item)
-          const id = a.attr("href") ?? ""
-          const title = a.attr("title") ?? ""
-          const cover = $(item).find("img").attr("src") ?? ""
+          const id = a.attr("href") || ""
+          const title = a.attr("title") || ""
+          const cover = $(item).find("img").attr("src") || ""
           return <IMovie>{ id, title, cover, remark: "" }
         })
         if (!videos.length) return null
@@ -74,9 +74,9 @@ export default class mxvod implements Handle {
     const $ = kitty.load(await req(url))
     return $(".homepage_video_wrap").toArray().map<IMovie>(item => {
       const a = $(item)
-      const id = a.attr("href") ?? ""
-      const title = a.attr("title") ?? ""
-      const cover = $(item).find("img").attr("src") ?? ""
+      const id = a.attr("href") || ""
+      const title = a.attr("title") || ""
+      const cover = $(item).find("img").attr("src") || ""
       return <IMovie>{ id, title, cover, remark: "", playlist: [] }
     })
   }
@@ -84,17 +84,17 @@ export default class mxvod implements Handle {
     const id = env.get<string>("movieId")
     const url = `${env.baseUrl}${id}`
     const $ = kitty.load(await req(url))
-    const desc = $(".content-desc").text().trim() || ($("meta[name='description']").attr("content") ?? "")
+    const desc = $(".content-desc").text().trim() || ($("meta[name='description']").attr("content") || "")
     const tabs = $(".play-source-tab a, .module-tab-item").toArray().map(item => {
-      const name = $(item).attr("data-dropdown-value") ?? $(item).find("span").attr("data-dropdown-value") ?? undefined
+      const name = $(item).attr("data-dropdown-value") || $(item).find("span").attr("data-dropdown-value") || undefined
       return name
     })
     const playlistTable = $(".module-player-list").toArray().map(item => {
-      let id = $(item).attr("id") ?? ""
+      let id = $(item).attr("id") || ""
       id = id.replace("glist-", "")
       const list = $(item).find(".sort-item a").toArray().map(item => {
-        const text = ($(item).text() ?? "").trim()
-        const id = $(item).attr("href") ?? ""
+        const text = ($(item).text() || "").trim()
+        const id = $(item).attr("href") || ""
         return <IPlaylistVideo>{ text, id }
       })
       return { id: +id, list }
@@ -102,7 +102,7 @@ export default class mxvod implements Handle {
     const playlist = tabs.map((item, index) => {
       return <IPlaylist>{
         title: item,
-        videos: playlistTable[index]?.list ?? []
+        videos: playlistTable[index]?.list || []
       }
     })
     return <IMovie>{ desc, playlist }
@@ -110,13 +110,13 @@ export default class mxvod implements Handle {
   async getSearch() {
     const wd = env.get("keyword")
     const page = env.get("page")
-    const url = `${env.baseUrl}/vodsearch/${encodeURIComponent(wd ?? '')}----------${page}---.html`
+    const url = `${env.baseUrl}/vodsearch/${encodeURIComponent(wd || '')}----------${page}---.html`
     const $ = kitty.load(await req(url))
     return $(".homepage_video_wrap").toArray().map<IMovie>(item => {
       const a = $(item)
-      const id = a.attr("href") ?? ""
-      const title = a.attr("title") ?? ""
-      const cover = $(item).find("img").attr("src") ?? ""
+      const id = a.attr("href") || ""
+      const title = a.attr("title") || ""
+      const cover = $(item).find("img").attr("src") || ""
       return { id, title, cover, remark: "", desc: "", playlist: [] }
     })
   }

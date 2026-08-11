@@ -32,10 +32,10 @@ export default class xiaoyakankan implements Handle {
       })
       const videos = $(".m4-main .m4-list").toArray().map(item => {
         return $(item).find(".item").toArray().map(subItem => {
-          const id = $(subItem).find("a.link").attr("href") ?? ""
+          const id = $(subItem).find("a.link").attr("href") || ""
           const title = $(subItem).find("a.title").text().trim()
-          const remark = $(subItem).find(".tag2").text() ?? ""
-          let cover = $(subItem).find("img.img").attr("data-src") ?? ""
+          const remark = $(subItem).find(".tag2").text() || ""
+          let cover = $(subItem).find("img.img").attr("data-src") || ""
           if (!!cover && cover.startsWith("//")) {
             cover = `https:${cover}`
           }
@@ -72,13 +72,13 @@ export default class xiaoyakankan implements Handle {
     const $ = kitty.load(html)
     return $(".m4-list .item").toArray().map<IMovie>(item => {
       const img = $(item).find("img.img")
-      const id = $(item).find("a.link").attr("href") ?? ""
-      const title = img.attr("alt") ?? ""
-      let cover = img.attr("data-src") ?? ""
+      const id = $(item).find("a.link").attr("href") || ""
+      const title = img.attr("alt") || ""
+      let cover = img.attr("data-src") || ""
       if (!!cover && cover.startsWith("//")) {
         cover = `https:${cover}`
       }
-      const remark = $(item).find(".tag1").text() ?? ""
+      const remark = $(item).find(".tag1").text() || ""
       return { id, title, cover, remark, playlist: [] }
     })
   }
@@ -89,11 +89,11 @@ export default class xiaoyakankan implements Handle {
     const $ = kitty.load(html)
     const div = $(".m4-vod")
     const img = div.find("img.img")
-    let cover = img.attr("src") ?? ""
+    let cover = img.attr("src") || ""
     if (!!cover && cover.startsWith("//")) {
       cover = `https:${cover}`
     }
-    let desc = $(".more .info:last-of-type").text() ?? ""
+    let desc = $(".more .info:last-of-type").text() || ""
     const kPrefix = "简介："
     if (desc.startsWith(kPrefix)) {
       desc = desc.replace(kPrefix, "")
@@ -102,7 +102,7 @@ export default class xiaoyakankan implements Handle {
     }
     const playlist: IPlaylist[] = []
     for (const script of $("body script").toArray()) {
-      let cx = $(script).text() ?? ""
+      let cx = $(script).text() || ""
       if (!cx || !cx.includes("var pp")) continue
       cx = cx.replace("var pp=", "")
       if (cx.endsWith(";")) cx = cx.slice(0, -1)//删除结尾的分号
@@ -117,7 +117,7 @@ export default class xiaoyakankan implements Handle {
         const urls = line[3]
         const videos = $(`div[data-vod='${_id}'] .list a`).toArray().map((item, index) => {
           const text = $(item).text().trim()
-          const idx = +($(item).attr("data-sou_idx") ?? "0")
+          const idx = +($(item).attr("data-sou_idx") || "0")
           const realUrl = urls[idx]
           return <IPlaylistVideo>{ text, url: realUrl }
         })

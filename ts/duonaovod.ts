@@ -32,18 +32,18 @@ export default class duonaovod implements Handle {
       const $ = kitty.load(await req(env.baseUrl))
       const banner = $(".balist_item").toArray().map(item => {
         const a = $(item).find("a")
-        const id = a.attr("href") ?? ""
+        const id = a.attr("href") || ""
         const title = $(item).find(".vodlist_title").text().trim()
         const sub = $(item).find(".vodlist_sub").text().trim()
-        const cover = a.attr("data-background") ?? ""
+        const cover = a.attr("data-background") || ""
         return <IMovie>{ id, title, cover, remark: sub }
       })
       const list = $(".vodlist_item").toArray().map(item => {
         const a = $(item).find(".vodlist_thumb")
-        const id = a.attr("href") ?? ""
+        const id = a.attr("href") || ""
         const title = $(item).find(".vodlist_title").text().trim()
         const sub = $(item).find(".vodlist_sub").text().trim()
-        const cover = a.attr("data-original") ?? ""
+        const cover = a.attr("data-original") || ""
         const remark = $(item).find(".pic_text").text().trim()
         return <IMovie>{ id, title, cover, remark, sub }
       })
@@ -69,10 +69,10 @@ export default class duonaovod implements Handle {
     const $ = kitty.load(await req(url))
     return $(".vodlist_item").toArray().map(item => {
       const a = $(item).find(".vodlist_thumb")
-      const id = a.attr("href") ?? ""
+      const id = a.attr("href") || ""
       const title = $(item).find(".vodlist_title").text().trim()
       const sub = $(item).find(".vodlist_sub").text().trim()
-      const cover = a.attr("data-original") ?? ""
+      const cover = a.attr("data-original") || ""
       const remark = $(item).find(".pic_text").text().trim()
       return <IMovie>{ id, title, cover, remark, sub }
     })
@@ -83,11 +83,11 @@ export default class duonaovod implements Handle {
     const url = `${env.baseUrl}${id}`
     const $ = kitty.load(await req(url))
     // Get description from meta or desc tab
-    let desc = $("meta[name='description']").attr("content") ?? ""
+    let desc = $("meta[name='description']").attr("content") || ""
     // Get playlist from play links
     const tabs = ["立即播放"]
     const playlistLinks = $(".content_playlist li a").toArray().map(item => {
-      const id = $(item).attr("href") ?? ""
+      const id = $(item).attr("href") || ""
       const text = $(item).text().trim()
       return <IPlaylistVideo>{ id, text }
     })
@@ -100,14 +100,14 @@ export default class duonaovod implements Handle {
   async getSearch() {
     const wd = env.get("keyword")
     const page = env.get("page")
-    const url = `${env.baseUrl}/video/search.html?searchKey=${encodeURIComponent(wd ?? '')}`
+    const url = `${env.baseUrl}/video/search.html?searchKey=${encodeURIComponent(wd || '')}`
     const $ = kitty.load(await req(url))
     return $(".vodlist_item").toArray().map(item => {
       const a = $(item).find(".vodlist_thumb")
-      const id = a.attr("href") ?? ""
+      const id = a.attr("href") || ""
       const title = $(item).find(".vodlist_title").text().trim()
       const sub = $(item).find(".vodlist_sub").text().trim()
-      const cover = a.attr("data-original") ?? ""
+      const cover = a.attr("data-original") || ""
       return <IMovie>{ id, title, cover, remark: "", desc: sub }
     })
   }

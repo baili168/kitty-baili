@@ -31,10 +31,10 @@ export default class zbkys implements Handle {
     const $ = kitty.load(html)
     return $(".stui-vodlist li").toArray().map<IMovie>(item => {
       const a = $(item).find("a.stui-vodlist__thumb")
-      const id = a.attr("href") ?? ""
-      const title = a.attr("title") ?? ""
-      const cover = a.attr("data-original") ?? ""
-      const remark = a.find(".pic-text.text-right").text() ?? ""
+      const id = a.attr("href") || ""
+      const title = a.attr("title") || ""
+      const cover = a.attr("data-original") || ""
+      const remark = a.find(".pic-text.text-right").text() || ""
       return <IMovie>{ id, title, cover, remark }
     })
   }
@@ -44,12 +44,12 @@ export default class zbkys implements Handle {
     const html = await req(url)
     const $ = kitty.load(html)
     const tabs = $(".nav.nav-tabs li").toArray().map(item => {
-      return $(item).text() ?? ""
+      return $(item).text() || ""
     })
     const map = $(".stui-panel_bd div.tab-pane").toArray().map(item => {
       return $(item).find("a").toArray().map(_ => {
-        const text = $(_).text() ?? ""
-        const id = $(_).attr("href") ?? ""
+        const text = $(_).text() || ""
+        const id = $(_).attr("href") || ""
         return <IPlaylistVideo>{ id, text }
       })
     })
@@ -58,9 +58,9 @@ export default class zbkys implements Handle {
       return <IPlaylist>{ title, videos }
     })
     const a = $(".stui-pannel-box .stui-vodlist__thumb.picture.v-thumb")
-    const title = a.attr("title") ?? ""
-    const cover = a.find("img").attr("data-original") ?? ""
-    const desc = $(".detail.col-pd").text() ?? ""
+    const title = a.attr("title") || ""
+    const cover = a.find("img").attr("data-original") || ""
+    const desc = $(".detail.col-pd").text() || ""
     return <IMovie>{ id, title, cover, desc, playlist }
   }
 
@@ -72,10 +72,10 @@ export default class zbkys implements Handle {
     const $ = kitty.load(html)
     return $(".stui-vodlist__media li").toArray().map(item => {
       const a = $(item).find(".v-thumb.stui-vodlist__thumb")
-      const title = a.attr("title") ?? ""
-      const cover = a.attr("data-original") ?? ""
-      const id = a.attr("href") ?? ""
-      const remark = a.find(".pic-text.text-right").text() ?? ""
+      const title = a.attr("title") || ""
+      const cover = a.attr("data-original") || ""
+      const id = a.attr("href") || ""
+      const remark = a.find(".pic-text.text-right").text() || ""
       return { id, title, cover, remark }
     })
   }
